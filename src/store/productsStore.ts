@@ -36,6 +36,28 @@ interface ProductsState {
   addProduct: (product: Omit<Product, 'id' | 'rating' | 'category' | 'image'>) => void;
 }
 
+const SORT_STORAGE_KEY = 'products_sort';
+
+function loadSortState(): { sortField: SortField | null; sortOrder: SortOrder } {
+  try {
+    const raw = localStorage.getItem(SORT_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (
+        (parsed.sortField === null || ['title', 'price', 'rating'].includes(parsed.sortField)) &&
+        ['asc', 'desc'].includes(parsed.sortOrder)
+      ) {
+        return parsed;
+      }
+    }
+  } catch { /* ignore corrupt data */ }
+  return { sortField: null, sortOrder: 'asc' };
+}
+
+function saveSortState(sortField: SortField | null, sortOrder: SortOrder) {
+  localStorage.setItem(SORT_STORAGE_KEY, JSON.stringify({ sortField, sortOrder }));
+}
+
 function mapApiProduct(raw: Record<string, unknown>): Product {
   return {
     id: raw.id as number,
@@ -58,8 +80,7 @@ export const useProductsStore = create<ProductsState>((set, get) => ({
   totalItems: 0,
   isLoading: false,
 
-  sortField: null,
-  sortOrder: 'asc',
+  ...loadSortState(),
 
   setSearchQuery: (query) => {
     set({ searchQuery: query, currentPage: 1 });
@@ -73,11 +94,23 @@ export const useProductsStore = create<ProductsState>((set, get) => ({
 
   setSort: (field) => {
     const { sortField, sortOrder } = get();
-    let newOrder: SortOrder = 'asc';
-    if (sortField === field) {
-      newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+
+    let newField: SortField | null;
+    let newOrder: SortOrder;
+
+    if (sortField !== field) {
+      newField = field;
+      newOrder = 'asc';
+    } else if (sortOrder === 'asc') {
+      newField = field;
+      newOrder = 'desc';
+    } else {
+      newField = null;
+      newOrder = 'asc';
     }
-    set({ sortField: field, sortOrder: newOrder, currentPage: 1 });
+
+    set({ sortField: newField, sortOrder: newOrder, currentPage: 1 });
+    saveSortState(newField, newOrder);
     get().fetchProducts();
   },
 
