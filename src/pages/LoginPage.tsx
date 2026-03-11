@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -52,20 +52,17 @@ function EyeOffIcon() {
   );
 }
 
-function WaveIcon() {
-  return (
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-      <rect x="2" y="12" width="4" height="8" rx="2" fill="#1e1e1e" />
-      <rect x="9" y="6" width="4" height="20" rx="2" fill="#1e1e1e" />
-      <rect x="16" y="9" width="4" height="14" rx="2" fill="#1e1e1e" />
-      <rect x="23" y="4" width="4" height="24" rx="2" fill="#1e1e1e" />
-    </svg>
-  );
-}
 
 export function LoginPage() {
   const navigate = useNavigate();
   const login = useAuthStore((s) => s.login);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/products', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const [showPassword, setShowPassword] = useState(false);
   const [apiError, setApiError] = useState('');
@@ -80,7 +77,7 @@ export function LoginPage() {
     defaultValues: {
       username: import.meta.env.VITE_TEST_USERNAME ?? '',
       password: import.meta.env.VITE_TEST_PASSWORD ?? '',
-      rememberMe: false,
+      rememberMe: localStorage.getItem('rememberMe') === 'true',
     },
   });
 
@@ -94,7 +91,11 @@ export function LoginPage() {
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const message = err.response?.data?.message;
-        setApiError(message || 'Ошибка авторизации. Попробуйте снова.');
+        if (message === 'Invalid credentials') {
+          setApiError('Неверный логин и/или пароль');
+        } else {
+          setApiError(message || 'Ошибка авторизации. Попробуйте снова.');
+        }
       } else {
         setApiError('Произошла непредвиденная ошибка.');
       }

@@ -27,6 +27,7 @@ function getStorage(rememberMe: boolean): Storage {
 function clearTokens() {
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
+  localStorage.removeItem('rememberMe');
   sessionStorage.removeItem('accessToken');
   sessionStorage.removeItem('refreshToken');
 }
@@ -53,6 +54,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     const storage = getStorage(rememberMe);
     storage.setItem('accessToken', data.accessToken);
     storage.setItem('refreshToken', data.refreshToken);
+    localStorage.setItem('rememberMe', String(rememberMe));
 
     set({
       user: {
