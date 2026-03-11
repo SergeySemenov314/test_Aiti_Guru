@@ -191,7 +191,7 @@ export function ProductsPage() {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto rounded-lg border border-gray-200">
+        <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-200 bg-gray-50/50">

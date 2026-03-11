@@ -6,6 +6,7 @@ import { useAuthStore } from '../store/authStore';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Checkbox } from '../components/ui/Checkbox';
+import logoImg from '../assets/logo.png';
 
 interface LoginFormValues {
   username: string;
@@ -76,7 +77,11 @@ export function LoginPage() {
     watch,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({
-    defaultValues: { username: '', password: '', rememberMe: false },
+    defaultValues: {
+      username: import.meta.env.VITE_TEST_USERNAME ?? '',
+      password: import.meta.env.VITE_TEST_PASSWORD ?? '',
+      rememberMe: false,
+    },
   });
 
   const usernameValue = watch('username');
@@ -106,11 +111,11 @@ export function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-10 shadow-lg">
+      <div className="w-full max-w-[527px] rounded-3xl bg-white pt-12 px-[58px] pb-[54px] shadow-[0_4px_32px_0_rgba(0,0,0,0.08)]">
         <div className="mb-6 flex flex-col items-center gap-3">
-          <WaveIcon />
-          <h1 className="text-2xl font-bold text-gray-900">Добро пожаловать!</h1>
-          <p className="text-sm text-gray-400">Пожалуйста, авторизуйтесь</p>
+          <img src={logoImg} alt="Logo" className="w-[52px] h-[52px]" />
+          <h1 className="text-[40px] font-semibold leading-[110%] tracking-[-0.015em] text-gray-900">Добро пожаловать!</h1>
+          <p className="text-[18px] font-medium leading-[150%] tracking-[0%] text-gray-400">Пожалуйста, авторизуйтесь</p>
         </div>
 
         {apiError && (
@@ -140,8 +145,8 @@ export function LoginPage() {
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Введите пароль"
                 {...passwordRegister}
-                className={`w-full rounded-lg border bg-white
-                           pl-10 pr-10 py-2.5 text-sm text-gray-900
+                className={`w-full h-[55px] rounded-lg border bg-white
+                           pl-10 pr-10 text-sm text-gray-900
                            placeholder:text-gray-400
                            focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary
                            transition-colors duration-150
@@ -183,10 +188,6 @@ export function LoginPage() {
             </a>
           </p>
         </form>
-
-        <p className="mt-6 text-center text-xs text-gray-400">
-          Тестовый логин: <span className="font-medium text-gray-500">emilys</span> / <span className="font-medium text-gray-500">emilyspass</span>
-        </p>
       </div>
     </div>
   );
