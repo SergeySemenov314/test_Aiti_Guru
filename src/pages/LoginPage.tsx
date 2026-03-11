@@ -80,7 +80,6 @@ export function LoginPage() {
   });
 
   const usernameValue = watch('username');
-  const passwordValue = watch('password');
 
   const onSubmit = async (data: LoginFormValues) => {
     setApiError('');
