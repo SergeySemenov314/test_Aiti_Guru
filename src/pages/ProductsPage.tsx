@@ -10,21 +10,13 @@ import { Checkbox } from '../components/ui/Checkbox';
 import { AddProductModal, type ProductFormData } from '../components/AddProductModal';
 import settingsIcon from '../assets/settings.png';
 import crossIcon from '../assets/cross.png';
+import arrowsClockwiseIcon from '../assets/ArrowsClockwise.svg';
 
 function SearchIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <circle cx="11" cy="11" r="8" />
       <line x1="21" y1="21" x2="16.65" y2="16.65" />
-    </svg>
-  );
-}
-
-function RefreshIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <polyline points="23 4 23 10 17 10" />
-      <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
     </svg>
   );
 }
@@ -295,11 +287,18 @@ export function ProductsPage() {
             )}
           </h2>
           <div className="flex items-center gap-2">
-            <Button variant="icon" title="Обновить" onClick={handleRefresh}>
-              <RefreshIcon />
+            <Button
+              variant="icon"
+              title="Обновить"
+              onClick={handleRefresh}
+              className="!h-[42px] !w-[42px] !min-w-[42px] !p-0 !rounded-lg border border-gray-200 bg-gray-50/80 hover:bg-gray-100"
+            >
+              <img src={arrowsClockwiseIcon} alt="" className="h-[18px] w-[18px]" />
             </Button>
-            <Button variant="primary" size="sm" onClick={() => setShowAddModal(true)}>
-              <PlusIcon />
+            <Button variant="primary" size="sm" onClick={() => setShowAddModal(true)} className="!h-[42px]">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-white text-white">
+                <PlusIcon />
+              </span>
               Добавить
             </Button>
           </div>
