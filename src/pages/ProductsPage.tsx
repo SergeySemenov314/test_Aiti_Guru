@@ -61,9 +61,7 @@ function SortIcon({ active, order }: { active: boolean; order: 'asc' | 'desc' })
 
 function getRatingColor(rating: number): string {
   if (rating < 3) return 'text-red-500';
-  if (rating >= 4.5) return 'text-green-600';
-  if (rating >= 4.0) return 'text-gray-700';
-  return 'text-yellow-600';
+  return 'text-gray-700';
 }
 
 function formatPrice(price: number): string {
