@@ -34,6 +34,8 @@ interface ProductsState {
   fetchProducts: () => Promise<void>;
   setSort: (field: SortField) => void;
   addProduct: (product: Omit<Product, 'id' | 'rating' | 'category' | 'image'>) => void;
+  updateProduct: (id: number, product: Partial<Pick<Product, 'name' | 'price' | 'vendor' | 'article'>>) => void;
+  deleteProduct: (id: number) => void;
 }
 
 const SORT_STORAGE_KEY = 'products_sort';
@@ -162,6 +164,21 @@ export const useProductsStore = create<ProductsState>((set, get) => ({
     set({
       products: [newProduct, ...products],
       totalItems: totalItems + 1,
+    });
+  },
+
+  updateProduct: (id, updates) => {
+    const { products } = get();
+    set({
+      products: products.map((p) => (p.id === id ? { ...p, ...updates } : p)),
+    });
+  },
+
+  deleteProduct: (id) => {
+    const { products, totalItems } = get();
+    set({
+      products: products.filter((p) => p.id !== id),
+      totalItems: totalItems - 1,
     });
   },
 

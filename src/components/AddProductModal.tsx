@@ -1,10 +1,18 @@
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 
-interface AddProductFormValues {
+interface ProductFormValues {
   name: string;
   price: string;
+  vendor: string;
+  article: string;
+}
+
+export interface ProductFormData {
+  name: string;
+  price: number;
   vendor: string;
   article: string;
 }
@@ -12,10 +20,13 @@ interface AddProductFormValues {
 interface AddProductModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: { name: string; price: number; vendor: string; article: string }) => void;
+  onSubmit: (data: ProductFormData) => void;
+  initialData?: ProductFormData | null;
 }
 
-export function AddProductModal({ open, onClose, onSubmit }: AddProductModalProps) {
+export function AddProductModal({ open, onClose, onSubmit, initialData }: AddProductModalProps) {
+  const isEdit = !!initialData;
+
   const {
     register,
     handleSubmit,
@@ -23,16 +34,28 @@ export function AddProductModal({ open, onClose, onSubmit }: AddProductModalProp
     setValue,
     watch,
     formState: { errors },
-  } = useForm<AddProductFormValues>({
+  } = useForm<ProductFormValues>({
     defaultValues: { name: '', price: '', vendor: '', article: '' },
   });
+
+  useEffect(() => {
+    if (open && initialData) {
+      setValue('name', initialData.name);
+      setValue('price', String(initialData.price));
+      setValue('vendor', initialData.vendor);
+      setValue('article', initialData.article);
+    }
+    if (open && !initialData) {
+      reset();
+    }
+  }, [open, initialData, setValue, reset]);
 
   const nameValue = watch('name');
   const priceValue = watch('price');
   const vendorValue = watch('vendor');
   const articleValue = watch('article');
 
-  const handleFormSubmit = (data: AddProductFormValues) => {
+  const handleFormSubmit = (data: ProductFormValues) => {
     onSubmit({
       name: data.name,
       price: parseFloat(data.price),
@@ -67,7 +90,9 @@ export function AddProductModal({ open, onClose, onSubmit }: AddProductModalProp
       <div className="absolute inset-0 bg-black/40" onClick={handleClose} />
       <div className="relative z-50 w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl">
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900">Добавить товар</h2>
+          <h2 className="text-xl font-bold text-gray-900">
+            {isEdit ? 'Редактировать товар' : 'Добавить товар'}
+          </h2>
           <button
             onClick={handleClose}
             className="text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
@@ -120,7 +145,7 @@ export function AddProductModal({ open, onClose, onSubmit }: AddProductModalProp
               Отмена
             </Button>
             <Button type="submit" variant="primary" size="md" fullWidth>
-              Добавить
+              {isEdit ? 'Сохранить' : 'Добавить'}
             </Button>
           </div>
         </form>

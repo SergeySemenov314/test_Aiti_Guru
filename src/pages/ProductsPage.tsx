@@ -1,13 +1,15 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useProductsStore, type SortField } from '../store/productsStore';
+import { useProductsStore, type SortField, type Product } from '../store/productsStore';
 import { useAuthStore } from '../store/authStore';
 import { useToastStore } from '../components/ui/Toast';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Pagination } from '../components/ui/Pagination';
 import { Checkbox } from '../components/ui/Checkbox';
-import { AddProductModal } from '../components/AddProductModal';
+import { AddProductModal, type ProductFormData } from '../components/AddProductModal';
+import settingsIcon from '../assets/settings.png';
+import crossIcon from '../assets/cross.png';
 
 function SearchIcon() {
   return (
@@ -59,6 +61,103 @@ function SortIcon({ active, order }: { active: boolean; order: 'asc' | 'desc' })
   );
 }
 
+function RowActions({
+  product,
+  onEdit,
+  onDelete,
+}: {
+  product: Product;
+  onEdit: (p: Product) => void;
+  onDelete: (p: Product) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex h-9 w-9 items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors cursor-pointer"
+      >
+        <img src={settingsIcon} alt="Настройки" className="w-8 h-8" />
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full mt-1 z-30 w-40 rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
+          <button
+            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
+            onClick={() => { setOpen(false); onEdit(product); }}
+          >
+            Изменить
+          </button>
+          <button
+            className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 cursor-pointer"
+            onClick={() => { setOpen(false); onDelete(product); }}
+          >
+            Удалить
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ConfirmDeleteModal({
+  product,
+  onConfirm,
+  onCancel,
+}: {
+  product: Product;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-40 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/40" onClick={onCancel} />
+      <div className="relative z-50 w-full max-w-sm rounded-2xl bg-white p-8 shadow-2xl">
+        <div className="absolute right-4 top-4">
+          <button
+            onClick={onCancel}
+            className="text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <h2 className="mb-2 text-lg font-bold text-gray-900">Удалить товар?</h2>
+        <p className="mb-6 text-sm text-gray-500">
+          Вы уверены, что хотите удалить «{product.name}»? Это действие нельзя отменить.
+        </p>
+        <div className="flex gap-3">
+          <Button type="button" variant="secondary" size="md" fullWidth onClick={onCancel}>
+            Отмена
+          </Button>
+          <Button
+            type="button"
+            variant="primary"
+            size="md"
+            fullWidth
+            className="!bg-red-600 hover:!bg-red-700"
+            onClick={onConfirm}
+          >
+            Удалить
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function getRatingColor(rating: number): string {
   if (rating < 3) return 'text-red-500';
   return 'text-gray-700';
@@ -90,9 +189,13 @@ export function ProductsPage() {
     fetchProducts,
     setSort,
     addProduct,
+    updateProduct,
+    deleteProduct,
   } = useProductsStore();
 
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
   const [localSearch, setLocalSearch] = useState(searchQuery);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -127,9 +230,23 @@ export function ProductsPage() {
     fetchProducts();
   };
 
-  const handleAddProduct = (data: { name: string; price: number; vendor: string; article: string }) => {
+  const handleAddProduct = (data: ProductFormData) => {
     addProduct(data);
     addToast('Товар успешно добавлен');
+  };
+
+  const handleEditProduct = (data: ProductFormData) => {
+    if (!editingProduct) return;
+    updateProduct(editingProduct.id, data);
+    addToast('Товар успешно обновлён');
+    setEditingProduct(null);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (!deletingProduct) return;
+    deleteProduct(deletingProduct.id);
+    addToast('Товар удалён');
+    setDeletingProduct(null);
   };
 
   const sortableHeader = (label: string, field: SortField) => (
@@ -210,7 +327,7 @@ export function ProductsPage() {
                     {sortableHeader('Цена, $', 'price')}
                   </div>
                 </th>
-                <th className="w-12 px-4 py-3" />
+                <th className="w-28 px-4 py-3" />
               </tr>
             </thead>
             <tbody>
@@ -266,10 +383,18 @@ export function ProductsPage() {
                     {formatPrice(product.price)}
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex items-center justify-end">
-                      <Button variant="icon" title="Добавить">
-                        <PlusIcon />
-                      </Button>
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        className="flex shrink-0 items-center justify-center transition-colors cursor-pointer"
+                        title="Добавить"
+                      >
+                        <img src={crossIcon} alt="Добавить" className="w-[52px] h-[27px] shrink-0 object-contain" />
+                      </button>
+                      <RowActions
+                        product={product}
+                        onEdit={(p) => setEditingProduct(p)}
+                        onDelete={(p) => setDeletingProduct(p)}
+                      />
                     </div>
                   </td>
                 </tr>
@@ -293,6 +418,28 @@ export function ProductsPage() {
         onClose={() => setShowAddModal(false)}
         onSubmit={handleAddProduct}
       />
+
+      {/* Edit Product Modal */}
+      <AddProductModal
+        open={!!editingProduct}
+        onClose={() => setEditingProduct(null)}
+        onSubmit={handleEditProduct}
+        initialData={editingProduct ? {
+          name: editingProduct.name,
+          price: editingProduct.price,
+          vendor: editingProduct.vendor,
+          article: editingProduct.article,
+        } : null}
+      />
+
+      {/* Delete Confirmation Modal */}
+      {deletingProduct && (
+        <ConfirmDeleteModal
+          product={deletingProduct}
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => setDeletingProduct(null)}
+        />
+      )}
     </div>
   );
 }
