@@ -7,7 +7,7 @@ interface ConfirmDeleteModalProps {
   onCancel: () => void;
 }
 
-export function ConfirmDeleteModal({ product, onConfirm, onCancel }: ConfirmDeleteModalProps) {
+export function ConfirmDeleteModal({ product, onConfirm, onCancel }: ConfirmDeleteModalProps): JSX.Element {
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/40" onClick={onCancel} />

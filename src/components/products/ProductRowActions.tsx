@@ -8,7 +8,7 @@ interface ProductRowActionsProps {
   onDelete: (p: Product) => void;
 }
 
-export function ProductRowActions({ product, onEdit, onDelete }: ProductRowActionsProps) {
+export function ProductRowActions({ product, onEdit, onDelete }: ProductRowActionsProps): JSX.Element {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
