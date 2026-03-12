@@ -78,7 +78,7 @@ function RowActions({
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen(!open)}
-        className="flex h-9 w-9 items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors cursor-pointer"
+        className="flex h-9 w-9 items-center justify-center rounded-xl text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors cursor-pointer"
       >
         <img src={settingsIcon} alt="Настройки" className="w-8 h-8" />
       </button>
@@ -260,17 +260,18 @@ export function ProductsPage() {
         </div>
       )}
 
-      <div className="mx-auto max-w-7xl px-6 py-8">
+      <div className="w-full px-[30px] py-8">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between gap-6">
-          <h1 className="text-2xl font-bold text-gray-900 shrink-0">Товары</h1>
-          <div className="flex-1 max-w-lg">
+          <h1 className="text-2xl font-bold leading-normal text-gray-900 shrink-0">Товары</h1>
+          <div className="flex-1 max-w-[1023px]">
             <Input
-              placeholder="Поиск товаров..."
+              placeholder="Найти"
               value={localSearch}
               onChange={(e) => handleSearchChange(e.target.value)}
               onClear={handleSearchClear}
               leftIcon={<SearchIcon />}
+              className="!h-12 !rounded-lg !border-0 !bg-gray-100 !placeholder:text-gray-400 focus:!ring-2 focus:!ring-gray-200"
             />
           </div>
           <Button variant="ghost" size="sm" onClick={handleSignOut}>
@@ -291,7 +292,7 @@ export function ProductsPage() {
               variant="icon"
               title="Обновить"
               onClick={handleRefresh}
-              className="!h-[42px] !w-[42px] !min-w-[42px] !p-0 !rounded-lg border border-gray-200 bg-gray-50/80 hover:bg-gray-100"
+              className="!h-[42px] !w-[42px] !min-w-[42px] !p-0 !rounded-xl border border-gray-200 bg-gray-50/80 hover:bg-gray-100"
             >
               <img src={arrowsClockwiseIcon} alt="" className="h-[18px] w-[18px]" />
             </Button>
@@ -321,12 +322,12 @@ export function ProductsPage() {
                 <th className="px-4 py-3 text-left">
                   {sortableHeader('Оценка', 'rating')}
                 </th>
-                <th className="px-4 py-3 text-right">
+                <th className="px-4 py-3 pr-16 text-right">
                   <div className="flex justify-end">
                     {sortableHeader('Цена, $', 'price')}
                   </div>
                 </th>
-                <th className="w-28 px-4 py-3" />
+                <th className="w-28 pl-16 px-4 py-3" />
               </tr>
             </thead>
             <tbody>
@@ -378,11 +379,11 @@ export function ProductsPage() {
                     </span>
                     <span className="text-gray-400">/5</span>
                   </td>
-                  <td className="px-4 py-3 text-right font-mono text-gray-700">
+                  <td className="px-4 py-3 pr-16 text-right font-mono text-gray-700">
                     {formatPrice(product.price)}
                   </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center justify-end gap-2">
+                  <td className="pl-16 px-4 py-3">
+                    <div className="flex items-center justify-end gap-4">
                       <button
                         className="flex shrink-0 items-center justify-center transition-colors cursor-pointer"
                         title="Добавить"

@@ -128,16 +128,18 @@ export function LoginPage() {
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <Input
             label="Логин"
+            labelClassName="!text-[18px] !font-medium !leading-[150%] !tracking-[-0.015em] !text-[#232323]"
             placeholder="Введите логин"
             leftIcon={<UserIcon />}
             error={errors.username?.message}
             {...usernameRegister}
             value={usernameValue}
             onClear={() => setValue('username', '', { shouldValidate: true })}
+            className="!text-[18px] !font-medium !leading-[150%] !tracking-[-0.015em] !text-[#232323] placeholder:!text-gray-400"
           />
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-700">Пароль</label>
+            <label className="text-[18px] font-medium leading-[150%] tracking-[-0.015em] text-[#232323]">Пароль</label>
             <div className="relative flex items-center">
               <span className="absolute left-3 text-gray-400 pointer-events-none">
                 <LockIcon />
@@ -147,7 +149,7 @@ export function LoginPage() {
                 placeholder="Введите пароль"
                 {...passwordRegister}
                 className={`w-full h-[55px] rounded-lg border bg-white
-                           pl-10 pr-10 text-sm text-gray-900
+                           pl-10 pr-10 text-[18px] font-medium leading-[150%] tracking-[-0.015em] text-[#232323]
                            placeholder:text-gray-400
                            focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary
                            transition-colors duration-150
@@ -176,15 +178,15 @@ export function LoginPage() {
             {isSubmitting ? 'Вход...' : 'Войти'}
           </Button>
 
-          <div className="flex items-center gap-3 text-sm text-gray-400">
+          <div className="flex items-center gap-3 text-[16px] font-medium leading-[150%] tracking-normal text-gray-400">
             <div className="h-px flex-1 bg-gray-200" />
             <span>или</span>
             <div className="h-px flex-1 bg-gray-200" />
           </div>
 
-          <p className="text-center text-sm text-gray-500">
+          <p className="text-center text-[18px] font-normal leading-[150%] tracking-normal text-[#666666]">
             Нет аккаунта?{' '}
-            <a href="#" className="font-medium text-primary hover:text-primary-hover">
+            <a href="#" className="font-semibold text-[#242EDB] border-b border-[#242EDB] hover:opacity-80">
               Создать
             </a>
           </p>

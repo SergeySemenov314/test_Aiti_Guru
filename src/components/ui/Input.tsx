@@ -6,6 +6,7 @@ import {
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
+  labelClassName?: string;
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
   error?: string;
@@ -13,11 +14,11 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, leftIcon, rightIcon, error, onClear, className = '', ...rest }, ref) => {
+  ({ label, labelClassName, leftIcon, rightIcon, error, onClear, className = '', ...rest }, ref) => {
     return (
       <div className="flex flex-col gap-1.5">
         {label && (
-          <label className="text-sm font-medium text-gray-700">{label}</label>
+          <label className={`text-sm font-medium text-gray-700 ${labelClassName ?? ''}`}>{label}</label>
         )}
         <div className="relative flex items-center">
           {leftIcon && (

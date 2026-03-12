@@ -55,7 +55,7 @@ export function Pagination({
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500
+          className="flex h-8 w-8 items-center justify-center rounded-xl text-gray-500
                      hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed
                      cursor-pointer transition-colors"
         >
@@ -73,7 +73,7 @@ export function Pagination({
             <button
               key={page}
               onClick={() => onPageChange(page)}
-              className={`flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium
+              className={`flex h-8 w-8 items-center justify-center rounded-xl text-sm font-medium
                          transition-colors cursor-pointer
                          ${
                            page === currentPage
@@ -89,7 +89,7 @@ export function Pagination({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500
+          className="flex h-8 w-8 items-center justify-center rounded-xl text-gray-500
                      hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed
                      cursor-pointer transition-colors"
         >

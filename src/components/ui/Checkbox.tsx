@@ -16,7 +16,7 @@ export function Checkbox({ label, className = '', ...rest }: CheckboxProps) {
         `}
         {...rest}
       />
-      {label && <span className="text-sm text-gray-600">{label}</span>}
+      {label && <span className="text-[16px] font-medium leading-[150%] tracking-normal text-[#9C9C9C]">{label}</span>}
     </label>
   );
 }
